@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { getFlagUrlFromDisplayName, getFlagUrlFromCountryName } from "@/utils/countryFlags";
 import { createClient } from "@/utils/supabase/client";
 
@@ -73,7 +73,7 @@ function StatusBadge({ status, color }: { status: string; color: string }) {
   );
 }
 
-export default function Dashboard() {
+function DashboardContent() {
   const searchParams = useSearchParams();
   const from = searchParams.get("from");
   const to = searchParams.get("to");
@@ -368,5 +368,17 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center h-screen bg-black">
+        <div className="text-xl text-gray-400 animate-pulse">Loading dashboard parameters...</div>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   );
 }
