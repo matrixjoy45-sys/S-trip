@@ -92,7 +92,7 @@ export default function Login() {
       if (error) throw error;
     } catch (err: any) {
       setErrorMsg(err.message || "Could not login with Google");
-      setLoading(false);
+
     }
   };
 
