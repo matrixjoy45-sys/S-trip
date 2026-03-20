@@ -33,6 +33,7 @@ export default function Login() {
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log("Button clicked"); // DEBUG
     e.preventDefault();
 
     setLoading(true);
