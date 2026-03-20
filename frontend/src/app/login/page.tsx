@@ -34,7 +34,6 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) return;
 
     setLoading(true);
     setErrorMsg("");
@@ -45,37 +44,46 @@ export default function Login() {
         if (!otpSent) {
           const { error } = await supabase.auth.signInWithOtp({ phone });
           if (error) throw error;
+
           setOtpSent(true);
-          setSuccessMsg("Check your phone for the SMS login code!");
+          setSuccessMsg("Check your phone for OTP!");
         } else {
-          // Verify code
-          const { error } = await supabase.auth.verifyOtp({ phone, token: otp, type: "sms" });
+          const { error } = await supabase.auth.verifyOtp({
+            phone,
+            token: otp,
+            type: "sms",
+          });
           if (error) throw error;
-          router.push("/setup");
+
+          window.location.href = "/setup";
         }
         return;
       }
+
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
+
         if (error) throw error;
-        setTimeout(() => {
-          window.location.href = "/setup";
-        }, 800);
+
+        window.location.href = "/setup";
       } else {
         const { error } = await supabase.auth.signUp({
           email,
           password,
         });
+
         if (error) throw error;
-        setErrorMsg("Check your email for the confirmation link!");
+
+        setSuccessMsg("Check your email for confirmation!");
       }
+
     } catch (err: any) {
-      setErrorMsg(err.message || "An error occurred");
+      setErrorMsg(err.message || "Error");
     } finally {
-      setLoading(false);
+      setLoading(false); // 🔥 important
     }
   };
 
