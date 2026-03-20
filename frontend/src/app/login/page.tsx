@@ -61,7 +61,9 @@ export default function Login() {
           password,
         });
         if (error) throw error;
-        window.location.href = "/setup";
+        setTimeout(() => {
+          window.location.href = "/setup";
+        }, 800);
       } else {
         const { error } = await supabase.auth.signUp({
           email,
