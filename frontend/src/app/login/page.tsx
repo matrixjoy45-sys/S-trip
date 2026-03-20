@@ -30,7 +30,7 @@ export default function Login() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [router, supabase.auth]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
