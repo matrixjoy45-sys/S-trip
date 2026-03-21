@@ -27,6 +27,17 @@ export default function Login() {
       }
     });
 
+    // Check if Google/Supabase sent back a hidden authentication error in the URL
+    if (window.location.hash.includes('error_description=')) {
+      const params = new URLSearchParams(window.location.hash.substring(1));
+      const errorDesc = params.get('error_description');
+      if (errorDesc) setErrorMsg(decodeURIComponent(errorDesc.replace(/\+/g, ' ')));
+    } else if (window.location.search.includes('error_description=')) {
+      const params = new URLSearchParams(window.location.search);
+      const errorDesc = params.get('error_description');
+      if (errorDesc) setErrorMsg(decodeURIComponent(errorDesc.replace(/\+/g, ' ')));
+    }
+
     const handlePageShow = (event: PageTransitionEvent) => {
       if (event.persisted) {
         setLoading(false);
@@ -103,7 +114,10 @@ export default function Login() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/setup`,
+          redirectTo: `${window.location.origin}/auth/callback?next=/setup`,
+          queryParams: {
+            prompt: 'select_account',
+          },
         },
       });
       if (error) throw error;

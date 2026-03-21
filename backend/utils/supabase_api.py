@@ -15,8 +15,14 @@ headers = {
     "Prefer": "return=representation"
 }
 
+_VEHICLE_CACHE = None
+
 def get_vehicles():
     """Fetch list of all vehicles from Supabase"""
+    global _VEHICLE_CACHE
+    if _VEHICLE_CACHE is not None:
+        return _VEHICLE_CACHE
+        
     if not SUPABASE_URL or not SUPABASE_KEY:
         print("Warning: Supabase keys missing, returning mock vehicles")
         return []
@@ -25,7 +31,8 @@ def get_vehicles():
     try:
         response = requests.get(url, headers=headers)
         response.raise_for_status()
-        return response.json()
+        _VEHICLE_CACHE = response.json()
+        return _VEHICLE_CACHE
     except Exception as e:
         print(f"Error fetching vehicles: {e}")
         return []
