@@ -23,7 +23,7 @@ export default function Login() {
     // Check if the user is already logged in or comes back from Google Auth
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        window.location.href = "/setup"
+        router.push("/setup");
       }
     });
 
@@ -49,11 +49,16 @@ export default function Login() {
       subscription.unsubscribe();
       window.removeEventListener("pageshow", handlePageShow);
     };
-  }, []);
+  }, [router, supabase.auth]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("Button clicked"); // DEBUG
     e.preventDefault();
+    if (!email || !password) {
+      if (authMethod === "email") {
+        setErrorMsg("Email and Password are required to sign in manually.");
+        return;
+      }
+    }
 
     setLoading(true);
     setErrorMsg("");
@@ -75,7 +80,7 @@ export default function Login() {
           });
           if (error) throw error;
 
-          window.location.href = "/setup";
+          router.push("/setup");
         }
         return;
       }
@@ -88,7 +93,7 @@ export default function Login() {
 
         if (error) throw error;
 
-        window.location.href = "/setup";
+        router.push("/setup");
       } else {
         const { error } = await supabase.auth.signUp({
           email,
