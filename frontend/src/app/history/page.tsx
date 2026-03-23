@@ -112,18 +112,18 @@ export default function TripHistory() {
                 </div>
 
                 {/* Metrics */}
-                <div className="flex flex-wrap gap-4 md:gap-8 bg-gray-900/40 p-3 rounded-lg border border-gray-700/50">
-                  <div className="flex flex-col text-center">
+                <div className="flex flex-wrap w-full md:w-auto justify-between md:justify-end gap-3 md:gap-8 bg-gray-900/40 p-3 rounded-lg border border-gray-700/50 mt-3 md:mt-0">
+                  <div className="flex flex-col text-left md:text-center">
                     <span className="text-[10px] text-gray-500 uppercase tracking-wider">Vehicle</span>
                     <span className="text-sm font-semibold text-gray-300">🚗 {trip.vehicle_name}</span>
                   </div>
                   
-                  <div className="flex flex-col text-center">
+                  <div className="flex flex-col text-left md:text-center">
                     <span className="text-[10px] text-gray-500 uppercase tracking-wider">Distance</span>
                     <span className="text-sm font-bold text-blue-400">{trip.distance_km} km</span>
                   </div>
 
-                  <div className="flex flex-col text-center">
+                  <div className="flex flex-col text-left md:text-center">
                     <span className="text-[10px] text-gray-500 uppercase tracking-wider">Fuel Cost</span>
                     <span className="text-sm font-bold text-green-400">
                       {trip.total_fuel_cost > 0 ? `${trip.total_fuel_cost} ${trip.currency}` : "N/A"}
@@ -131,7 +131,7 @@ export default function TripHistory() {
                   </div>
                   
                   {(trip.scheduled_date || trip.scheduled_time) && (
-                    <div className="flex flex-col text-center border-l border-gray-700/50 pl-4 hidden sm:flex">
+                    <div className="flex flex-col text-left md:text-center md:border-l md:border-gray-700/50 md:pl-4">
                       <span className="text-[10px] text-gray-500 uppercase tracking-wider">Scheduled for</span>
                       <span className="text-sm font-semibold text-yellow-400">
                         {trip.scheduled_date} {trip.scheduled_time}

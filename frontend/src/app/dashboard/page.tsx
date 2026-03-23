@@ -116,12 +116,19 @@ function DashboardContent() {
   }, [from, to, vehicle]);
 
   useEffect(() => {
-    if (from && to && vehicle) fetchAnalysis(speed);
+    if (!from || !to || !vehicle) return;
+    
+    // Debounce the API call by 500ms so it only fetches when user stops sliding
+    const timer = setTimeout(() => {
+      fetchAnalysis(speed);
+    }, 500);
+
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [speed]);
 
   const fetchAnalysis = async (currentSpeed: number) => {
-    setLoading(true);
+    if (!analysis) setLoading(true); // Only show full-screen loader on initial mount
     try {
       const countryName = extractCountry(to || "");
       const body: any = {
@@ -198,22 +205,10 @@ function DashboardContent() {
   return (
     <div className="flex flex-col gap-6 animate-fade-in pb-12">
       {/* Header */}
-      <div className="px-6 py-6 bg-gradient-to-r from-blue-900/40 to-purple-900/40 rounded-xl border border-blue-500/20 shadow-lg relative">
-        {userId && (
-          <button 
-            onClick={handleSaveTrip} 
-            disabled={saving || loading}
-            className={`absolute top-6 right-6 px-4 py-2 rounded font-bold text-sm transition-all ${
-              saveSuccess 
-                ? "bg-green-500 hover:bg-green-600 text-white" 
-                : "bg-blue-600 hover:bg-blue-500 text-white shadow hover:shadow-lg"
-            }`}
-          >
-            {saving ? "Saving..." : saveSuccess ? "✅ Saved!" : "💾 Save Trip To History"}
-          </button>
-        )}
-        <h1 className="text-3xl font-extrabold mb-2">🗺️ Trip Dashboard</h1>
-        <p className="text-lg">
+      <div className="px-5 md:px-6 py-6 bg-gradient-to-r from-blue-900/40 to-purple-900/40 rounded-xl border border-blue-500/20 shadow-lg flex flex-col items-start md:flex-row md:justify-between md:items-start gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-extrabold mb-2">🗺️ Trip Dashboard</h1>
+          <p className="text-lg">
           <span className="font-semibold text-white"><FlagImg url={getFlagUrlFromDisplayName(from || "")} /> {from}</span>
           <span className="mx-3 text-gray-400">➔</span>
           <span className="font-semibold text-white"><FlagImg url={getFlagUrlFromDisplayName(to || "")} /> {to}</span>
@@ -225,6 +220,21 @@ function DashboardContent() {
           <span>·</span>
           <span>{a?.vehicle_type || "..."}</span>
         </div>
+        </div>
+        
+        {userId && (
+          <button 
+            onClick={handleSaveTrip} 
+            disabled={saving || loading}
+            className={`w-full md:w-auto px-4 py-2 rounded font-bold text-sm transition-all ${
+              saveSuccess 
+                ? "bg-green-500 hover:bg-green-600 text-white" 
+                : "bg-blue-600 hover:bg-blue-500 text-white shadow hover:shadow-lg"
+            }`}
+          >
+            {saving ? "Saving..." : saveSuccess ? "✅ Saved!" : "💾 Save Trip To History"}
+          </button>
+        )}
       </div>
 
       {/* Row 1: Distance / Time / Fuel Cost Overview */}
