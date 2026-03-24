@@ -91,8 +91,8 @@ export default function Navbar() {
       </div>
       
       <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto text-sm md:text-base">
-        <Link href="/" className="text-gray-300 hover:text-white transition-colors py-1">
-          Home
+        <Link href="/setup" className="text-gray-300 hover:text-white transition-colors py-1 flex items-center gap-1">
+          🏠 Home
         </Link>
         <Link href="/setup" className="text-gray-300 hover:text-white transition-colors py-1">
           Plan Trip
