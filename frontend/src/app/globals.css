@@ -8,36 +8,32 @@
 }
 
 /*
-  The modern, dynamic travel analyzer theme
+  Premium Predictive AI Automotive Theme (Midnight Sapphire & Magenta)
 */
 :root {
-  --background: #0f172a; /* Deep slate */
-  --foreground: #f8fafc;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --secondary: #8b5cf6;
-  --accent: #10b981;
-  --danger: #ef4444;
-  --warning: #f59e0b;
-  --glass-bg: rgba(30, 41, 59, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --background: #060B14; /* Deep Abyss */
+  --foreground: #F0F4FC;
+  --primary: #00F0FF; /* Electric Cyan */
+  --primary-hover: #00B4D8; 
+  --secondary: #FF007A; /* Magenta Pink */
+  --accent: #00E676; /* Vibrant Green */
+  --danger: #FF1744;
+  --warning: #FFD600;
+  --glass-bg: rgba(10, 18, 35, 0.65); /* Rich darker glass for contrast */
+  --glass-border: rgba(0, 240, 255, 0.15); /* Cyan-tinted elegant borders */
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   min-height: 100vh;
-  /* subtle animated gradient background */
-  background: linear-gradient(125deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-  background-size: 200% 200%;
-  animation: gradientMove 15s ease infinite;
-}
-
-@keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  /* Cinematic mesh gradient background */
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.08), transparent 40%),
+    radial-gradient(circle at 90% 70%, rgba(255, 0, 122, 0.08), transparent 50%),
+    linear-gradient(180deg, #02040A 0%, #060B14 100%);
+  background-attachment: fixed;
 }
 
 .glass-panel {

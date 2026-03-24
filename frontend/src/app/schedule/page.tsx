@@ -156,7 +156,22 @@ export default function Schedule() {
       {notifPermission !== "granted" && (
         <div className="w-full mb-6 p-4 rounded-lg bg-yellow-900/30 border border-yellow-500/30 flex items-center justify-between">
           <p className="text-yellow-400 text-sm">🔔 Enable notifications to get trip reminders!</p>
-          <button onClick={requestPermission} className="btn-primary text-xs px-3 py-1">
+          <button 
+            onClick={async () => {
+              if ("Notification" in window) {
+                try {
+                  const permission = await window.Notification.requestPermission();
+                  setNotifPermission(permission);
+                  if (permission !== "granted") alert("You denied notification permissions in your browser.");
+                } catch (err) {
+                  alert("Your browser completely restricts notifications. Please check your system settings.");
+                }
+              } else {
+                alert("Push notifications are not supported on this device/browser.");
+              }
+            }} 
+            className="btn-primary text-xs px-4 py-2"
+          >
             Enable
           </button>
         </div>
@@ -219,7 +234,7 @@ export default function Schedule() {
           </div>
         </div>
 
-        <button type="submit" className="btn-primary mt-4 py-3 text-lg">
+        <button type="submit" className="btn-primary w-full mt-6 py-4 text-xl font-extrabold shadow-lg hover:shadow-2xl transition-all">
           🔔 Save & Set Reminder
         </button>
       </form>
