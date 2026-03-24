@@ -92,9 +92,9 @@ export default function TripHistory() {
               {/* Card accent line */}
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-purple-500 group-hover:w-2 transition-all"></div>
               
-              <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 pl-2">
+              <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-4 pl-2">
                 {/* Locations */}
-                <div className="flex-1">
+                <div className="flex-1 min-w-0 pr-4">
                   <div className="flex items-center text-lg font-bold text-white mb-1">
                     <span className="truncate max-w-[40%] flex items-center">
                       <img src={getFlagUrlFromDisplayName(trip.departure_location) || ""} className="w-5 h-3 mr-2 rounded-sm opacity-80" alt="" onError={(e) => e.currentTarget.style.display='none'} />
@@ -112,7 +112,7 @@ export default function TripHistory() {
                 </div>
 
                 {/* Metrics */}
-                <div className="flex flex-wrap w-full md:w-auto justify-between md:justify-end gap-3 md:gap-8 bg-gray-900/40 p-3 rounded-lg border border-gray-700/50 mt-3 md:mt-0">
+                <div className="flex-shrink-0 flex flex-wrap w-full xl:w-auto justify-between xl:justify-end gap-3 md:gap-6 bg-gray-900/40 p-3 rounded-lg border border-gray-700/50 mt-3 xl:mt-0">
                   <div className="flex flex-col text-left md:text-center">
                     <span className="text-[10px] text-gray-500 uppercase tracking-wider">Vehicle</span>
                     <span className="text-sm font-semibold text-gray-300">🚗 {trip.vehicle_name}</span>

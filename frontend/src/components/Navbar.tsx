@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
+import { playAlertSound, playNotificationSound } from '@/utils/notificationSound';
 
 export default function Navbar() {
   const supabase = createClient();
@@ -21,7 +22,56 @@ export default function Navbar() {
       setUser(session?.user ?? null);
     });
 
-    return () => { listener.subscription.unsubscribe(); };
+    // Global Trip Reminder System
+    const checkGlobalReminders = () => {
+      const saved = localStorage.getItem("scheduledTrips");
+      if (!saved) return;
+      
+      const trips = JSON.parse(saved);
+      const now = new Date();
+      let modified = false;
+
+      const updatedTrips = trips.map((trip: any) => {
+        if (trip.notified) return trip;
+        const tripDateTime = new Date(`${trip.date}T${trip.time}`);
+        const diffMs = tripDateTime.getTime() - now.getTime();
+        const diffMinutes = diffMs / (1000 * 60);
+
+        if (diffMinutes > 0 && diffMinutes <= 30) {
+          triggerNotification(trip, false);
+          modified = true;
+          return { ...trip, notified: true };
+        }
+        if (diffMinutes > -5 && diffMinutes <= 0) {
+          triggerNotification(trip, true);
+          modified = true;
+          return { ...trip, notified: true };
+        }
+        return trip;
+      });
+
+      if (modified) localStorage.setItem("scheduledTrips", JSON.stringify(updatedTrips));
+    };
+
+    const triggerNotification = (trip: any, isNow: boolean) => {
+      const title = isNow ? "🚗 Trip Starting Now!" : "⏰ Trip Reminder - 30 min!";
+      const body = `Your trip to ${trip.destination} with ${trip.vehicle} is ${isNow ? "starting now" : "coming up in 30 minutes"}!`;
+      
+      if (isNow) playAlertSound();
+      else playNotificationSound();
+
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification(title, { body, icon: "/favicon.ico" });
+      }
+    };
+
+    const interval = setInterval(checkGlobalReminders, 30000);
+    checkGlobalReminders();
+
+    return () => { 
+      listener.subscription.unsubscribe(); 
+      clearInterval(interval);
+    };
   }, [supabase.auth]);
 
   const handleLogout = async () => {
@@ -41,6 +91,9 @@ export default function Navbar() {
       </div>
       
       <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto text-sm md:text-base">
+        <Link href="/" className="text-gray-300 hover:text-white transition-colors py-1">
+          Home
+        </Link>
         <Link href="/setup" className="text-gray-300 hover:text-white transition-colors py-1">
           Plan Trip
         </Link>

@@ -48,59 +48,8 @@ export default function Schedule() {
     }
   }, []);
 
-  // Check for upcoming reminders every 30 seconds
-  const checkReminders = useCallback(() => {
-    const now = new Date();
-    const updatedTrips = trips.map((trip) => {
-      if (trip.notified) return trip;
-
-      const tripDateTime = new Date(`${trip.date}T${trip.time}`);
-      const diffMs = tripDateTime.getTime() - now.getTime();
-      const diffMinutes = diffMs / (1000 * 60);
-
-      // Notify 30 minutes before trip
-      if (diffMinutes > 0 && diffMinutes <= 30) {
-        sendNotification(trip);
-        return { ...trip, notified: true };
-      }
-      // Notify if trip is right now
-      if (diffMinutes > -5 && diffMinutes <= 0) {
-        sendNotification(trip, true);
-        return { ...trip, notified: true };
-      }
-      return trip;
-    });
-
-    if (JSON.stringify(updatedTrips) !== JSON.stringify(trips)) {
-      setTrips(updatedTrips);
-      localStorage.setItem("scheduledTrips", JSON.stringify(updatedTrips));
-    }
-  }, [trips]);
-
-  useEffect(() => {
-    const interval = setInterval(checkReminders, 30000);
-    checkReminders(); // Check immediately
-    return () => clearInterval(interval);
-  }, [checkReminders]);
-
-  const sendNotification = (trip: ScheduledTrip, isNow = false) => {
-    const title = isNow ? "🚗 Trip Starting Now!" : "⏰ Trip Reminder - 30 min!";
-    const body = `Your trip to ${trip.destination} with ${trip.vehicle} is ${isNow ? "starting now" : "coming up in 30 minutes"}!`;
-    
-    // 1. Play Sound
-    if (isNow) playAlertSound();
-    else playNotificationSound();
-
-    // 2. Show In-App Toast
-    setActiveToast({ title, message: body, isUrgent: isNow });
-    setTimeout(() => setActiveToast(null), 8000); // Hide after 8s
-
-    // 3. Send Browser Push Notification
-    if ("Notification" in window && Notification.permission === "granted") {
-      new Notification(title, { body, icon: "/favicon.ico" });
-    }
-  };
-
+  // Removed localized interval check - migrated to global Navbar to run everywhere
+  
   const requestPermission = async () => {
     if ("Notification" in window) {
       const permission = await Notification.requestPermission();
