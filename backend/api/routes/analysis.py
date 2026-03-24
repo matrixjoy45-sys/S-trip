@@ -2,6 +2,10 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Optional
 import math
+import os
+import json
+import urllib.request
+import urllib.parse
 from utils.supabase_api import get_vehicles, get_fuel_price_for_country
 
 router = APIRouter()
@@ -15,6 +19,22 @@ def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
     c = 2 * math.asin(math.sqrt(a))
     # Multiply by 1.3 for road distance approximation (roads aren't straight lines)
     return round(R * c * 1.3, 2)
+
+def get_google_maps_route(lat1: float, lon1: float, lat2: float, lon2: float, api_key: str):
+    """Fetch exact driving distance and duration from Google Maps Directions API."""
+    try:
+        url = f"https://maps.googleapis.com/maps/api/directions/json?origin={lat1},{lon1}&destination={lat2},{lon2}&key={api_key}"
+        req = urllib.request.Request(url)
+        with urllib.request.urlopen(req, timeout=5) as response:
+            data = json.loads(response.read().decode())
+            if data.get("status") == "OK":
+                leg = data["routes"][0]["legs"][0]
+                dist_km = leg["distance"]["value"] / 1000.0
+                baseline_duration_hours = leg["duration"]["value"] / 3600.0
+                return {"distance_km": round(dist_km, 2), "baseline_duration_hours": baseline_duration_hours}
+    except Exception as e:
+        print(f"Google Maps API Error: {e}")
+    return None
 
 class TripRequest(BaseModel):
     speed_kmh: float
@@ -75,10 +95,20 @@ class TripResponse(BaseModel):
 @router.post("/trip", response_model=TripResponse)
 def analyze_trip(request: TripRequest):
     # --- Calculate real distance ---
+    distance_km = request.distance_km or 300.0
+    baseline_hours = None
+    google_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
+
     if request.from_lat and request.from_lon and request.to_lat and request.to_lon:
-        distance_km = haversine_distance(request.from_lat, request.from_lon, request.to_lat, request.to_lon)
-    else:
-        distance_km = request.distance_km or 300.0
+        if google_api_key:
+            route_data = get_google_maps_route(request.from_lat, request.from_lon, request.to_lat, request.to_lon, google_api_key)
+            if route_data:
+                distance_km = route_data["distance_km"]
+                baseline_hours = route_data["baseline_duration_hours"]
+            else:
+                distance_km = haversine_distance(request.from_lat, request.from_lon, request.to_lat, request.to_lon)
+        else:
+            distance_km = haversine_distance(request.from_lat, request.from_lon, request.to_lat, request.to_lon)
 
     # --- Resolve vehicle ---
     mileage = request.vehicle_mileage_km_l or 15.0
