@@ -109,6 +109,7 @@ export default function TripSetup() {
       fromLat: fromCoords.lat, fromLon: fromCoords.lon,
       toLat: toCoords.lat, toLon: toCoords.lon,
     });
+    localStorage.setItem('lastTripParams', searchParams.toString());
     router.push(`/dashboard?${searchParams.toString()}`);
   };
 
