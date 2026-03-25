@@ -1,0 +1,151 @@
+-- The Ultimate Global Vehicle Seed Script
+-- Fixed to include the mandatory 'engine_capacity_cc' column required by your database!
+
+DELETE FROM vehicles;
+
+INSERT INTO vehicles (brand, name, type, fuel_efficiency_km_l, engine_capacity_cc) VALUES
+  
+  -- === SCOOTERS & MOPEDS ===
+  ('Honda', 'Activa 6G', 'Scooter', 45.0, 110),
+  ('Honda', 'Dio', 'Scooter', 48.0, 110),
+  ('Honda', 'PCX 150', 'Scooter', 42.0, 150),
+  ('Yamaha', 'Fascino 125', 'Scooter', 50.0, 125),
+  ('Yamaha', 'NMAX 155', 'Scooter', 42.0, 155),
+  ('Vespa', 'Primavera 150', 'Scooter', 38.5, 150),
+  ('Vespa', 'GTS 300', 'Scooter', 30.0, 300),
+  ('Suzuki', 'Access 125', 'Scooter', 45.0, 125),
+  ('Suzuki', 'Burgman Street', 'Scooter', 48.0, 125),
+  ('TVS', 'Jupiter', 'Scooter', 48.0, 110),
+  ('TVS', 'Ntorq 125', 'Scooter', 45.0, 125),
+  ('Aprilia', 'SR 160', 'Scooter', 35.0, 160),
+  ('Hero', 'Pleasure Plus', 'Scooter', 50.0, 110),
+  
+  -- === ELECTRIC SCOOTERS ===
+  ('Ather', '450X', 'EV Scooter', 99.9, 0),
+  ('Ola', 'S1 Pro', 'EV Scooter', 99.9, 0),
+  ('TVS', 'iQube', 'EV Scooter', 99.9, 0),
+  ('Hero Electric', 'Optima', 'EV Scooter', 99.9, 0),
+  ('Bajaj', 'Chetak EV', 'EV Scooter', 99.9, 0),
+
+  -- === COMMUTER MOTORCYCLES ===
+  ('Hero', 'Splendor Plus', 'Motorcycle', 60.0, 100),
+  ('Hero', 'Passion Pro', 'Motorcycle', 55.0, 110),
+  ('Honda', 'CB Shine', 'Motorcycle', 55.0, 125),
+  ('Honda', 'Unicorn', 'Motorcycle', 50.0, 160),
+  ('Bajaj', 'Platina 100', 'Motorcycle', 60.0, 100),
+  ('Bajaj', 'Pulsar 150', 'Motorcycle', 45.0, 150),
+  ('Bajaj', 'Pulsar NS200', 'Motorcycle', 35.0, 200),
+  ('TVS', 'Apache RTR 160', 'Motorcycle', 45.0, 160),
+  ('Yamaha', 'FZS-FI', 'Motorcycle', 45.0, 150),
+
+  -- === CRUISER & SPORTS MOTORCYCLES ===
+  ('Royal Enfield', 'Classic 350', 'Cruiser', 35.0, 350),
+  ('Royal Enfield', 'Bullet 350', 'Cruiser', 38.0, 350),
+  ('Royal Enfield', 'Himalayan', 'Adventure', 30.0, 411),
+  ('Royal Enfield', 'Interceptor 650', 'Adventure', 25.0, 650),
+  ('KTM', 'Duke 390', 'Motorcycle', 25.0, 373),
+  ('KTM', 'RC 200', 'Motorcycle', 32.0, 200),
+  ('Yamaha', 'MT-15', 'Motorcycle', 45.0, 155),
+  ('Yamaha', 'R15 V4', 'Motorcycle', 40.0, 155),
+  ('Kawasaki', 'Ninja 300', 'Motorcycle', 26.0, 296),
+  ('Kawasaki', 'Ninja 400', 'Motorcycle', 24.0, 399),
+  ('Honda', 'CBR 650R', 'Motorcycle', 20.0, 649),
+  ('Triumph', 'Street Twin', 'Motorcycle', 22.0, 900),
+  ('Triumph', 'Bonneville T100', 'Motorcycle', 20.0, 900),
+
+  -- === SUPERBIKES ===
+  ('BMW', 'S1000RR', 'Superbike', 15.0, 999),
+  ('Ducati', 'Panigale V4', 'Superbike', 14.0, 1103),
+  ('Kawasaki', 'Ninja ZX-10R', 'Superbike', 15.0, 998),
+  ('Yamaha', 'YZF R1', 'Superbike', 16.0, 998),
+  ('Suzuki', 'Hayabusa', 'Superbike', 14.0, 1340),
+
+  -- === HATCHBACKS & COMPACT CARS ===
+  ('Maruti Suzuki', 'Swift', 'Hatchback', 22.0, 1200),
+  ('Maruti Suzuki', 'Baleno', 'Hatchback', 22.5, 1200),
+  ('Maruti Suzuki', 'Alto 800', 'Hatchback', 22.0, 800),
+  ('Hyundai', 'i20', 'Hatchback', 20.0, 1200),
+  ('Hyundai', 'Grand i10 Nios', 'Hatchback', 21.0, 1200),
+  ('Tata', 'Altroz', 'Hatchback', 19.5, 1200),
+  ('Tata', 'Tiago', 'Hatchback', 20.0, 1200),
+  ('Toyota', 'Glanza', 'Hatchback', 22.0, 1200),
+  ('Volkswagen', 'Polo', 'Hatchback', 16.5, 1000),
+  ('Volkswagen', 'Golf', 'Hatchback', 16.0, 1400),
+  ('Honda', 'Fit', 'Hatchback', 18.0, 1500),
+
+  -- === SEDANS ===
+  ('Toyota', 'Corolla', 'Sedan', 18.5, 1800),
+  ('Toyota', 'Camry', 'Sedan', 16.0, 2500),
+  ('Toyota', 'Yaris', 'Sedan', 19.0, 1500),
+  ('Honda', 'Civic', 'Sedan', 17.5, 2000),
+  ('Honda', 'Accord', 'Sedan', 15.0, 2400),
+  ('Honda', 'City', 'Sedan', 18.0, 1500),
+  ('Hyundai', 'Verna', 'Sedan', 17.5, 1500),
+  ('Hyundai', 'Elantra', 'Sedan', 15.0, 2000),
+  ('Maruti Suzuki', 'Dzire', 'Sedan', 22.0, 1200),
+  ('Skoda', 'Slavia', 'Sedan', 18.0, 1000),
+  ('Skoda', 'Octavia', 'Sedan', 15.0, 2000),
+  ('BMW', '3 Series', 'Sedan', 14.0, 2000),
+  ('BMW', '5 Series', 'Sedan', 12.0, 3000),
+  ('Mercedes-Benz', 'C-Class', 'Sedan', 13.5, 2000),
+  ('Mercedes-Benz', 'E-Class', 'Sedan', 12.5, 3000),
+  ('Audi', 'A4', 'Sedan', 14.5, 2000),
+  ('Audi', 'A6', 'Sedan', 13.0, 3000),
+
+  -- === COMPACT SUVs ===
+  ('Hyundai', 'Creta', 'SUV', 16.5, 1500),
+  ('Kia', 'Seltos', 'SUV', 16.5, 1500),
+  ('Kia', 'Sonet', 'SUV', 18.0, 1200),
+  ('Tata', 'Nexon', 'SUV', 17.0, 1200),
+  ('Maruti Suzuki', 'Brezza', 'SUV', 19.0, 1500),
+  ('Mahindra', 'XUV300', 'SUV', 17.0, 1200),
+  ('Nissan', 'Magnite', 'SUV', 18.5, 1000),
+  ('Renault', 'Kiger', 'SUV', 19.0, 1000),
+  ('Honda', 'HR-V', 'SUV', 15.0, 1800),
+
+  -- === MID-SIZE & FULL-SIZE SUVs ===
+  ('Toyota', 'Fortuner', 'SUV', 10.0, 2800),
+  ('Toyota', 'RAV4', 'SUV', 14.5, 2500),
+  ('Toyota', 'Highlander', 'SUV', 12.0, 3500),
+  ('Toyota', 'Land Cruiser', 'SUV', 8.0, 4500),
+  ('Ford', 'Endeavour', 'SUV', 9.5, 3200),
+  ('Ford', 'Explorer', 'SUV', 11.0, 3000),
+  ('Mahindra', 'Scorpio N', 'SUV', 12.0, 2200),
+  ('Mahindra', 'XUV700', 'SUV', 13.0, 2200),
+  ('Mahindra', 'Thar', 'SUV', 11.5, 2200),
+  ('Tata', 'Harrier', 'SUV', 15.0, 2000),
+  ('Tata', 'Safari', 'SUV', 14.0, 2000),
+  ('Jeep', 'Compass', 'SUV', 14.0, 2000),
+  ('Jeep', 'Wrangler', 'SUV', 9.0, 3600),
+  ('Land Rover', 'Range Rover Sport', 'SUV', 10.0, 3000),
+  ('Land Rover', 'Defender', 'SUV', 9.0, 3000),
+  ('BMW', 'X5', 'SUV', 11.0, 3000),
+  ('Mercedes-Benz', 'GLE', 'SUV', 10.5, 3000),
+
+  -- === PICKUP TRUCKS ===
+  ('Ford', 'F-150', 'Truck', 8.5, 3500),
+  ('Ford', 'Ranger', 'Truck', 10.0, 2300),
+  ('Toyota', 'Hilux', 'Truck', 9.0, 2800),
+  ('Toyota', 'Tacoma', 'Truck', 9.5, 3500),
+  ('Chevrolet', 'Silverado', 'Truck', 8.0, 5300),
+  ('Ram', '1500', 'Truck', 8.5, 5700),
+  ('Isuzu', 'D-Max V-Cross', 'Truck', 10.5, 1900),
+
+  -- === ELECTRIC VEHICLES (EVs) ===
+  ('Tesla', 'Model 3', 'EV', 99.9, 0),
+  ('Tesla', 'Model Y', 'EV', 99.9, 0),
+  ('Tesla', 'Model S', 'EV', 99.9, 0),
+  ('Tesla', 'Model X', 'EV', 99.9, 0),
+  ('Hyundai', 'Ioniq 5', 'EV', 99.9, 0),
+  ('Hyundai', 'Kona Electric', 'EV', 99.9, 0),
+  ('Kia', 'EV6', 'EV', 99.9, 0),
+  ('Tata', 'Nexon EV', 'EV', 99.9, 0),
+  ('Tata', 'Tiago EV', 'EV', 99.9, 0),
+  ('MG', 'ZS EV', 'EV', 99.9, 0),
+  ('Porsche', 'Taycan', 'EV', 99.9, 0),
+  ('Audi', 'e-tron', 'EV', 99.9, 0),
+  ('Ford', 'Mustang Mach-E', 'EV', 99.9, 0),
+  ('Rivian', 'R1T', 'EV Truck', 99.9, 0),
+  ('Lucid', 'Air', 'EV', 99.9, 0),
+  ('NIO', 'Atto 3', 'EV', 99.9, 0),
+  ('BYD', 'Seal', 'EV', 99.9, 0);

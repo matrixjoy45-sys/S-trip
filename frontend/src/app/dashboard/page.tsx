@@ -43,6 +43,7 @@ interface TripAnalysis {
   vehicle_mileage: number;
   currency: string;
   country_name: string;
+  destination_temp_c?: number;
 }
 
 function GaugeBar({ percent, color, label }: { percent: number; color: string; label: string }) {
@@ -220,6 +221,11 @@ function DashboardContent() {
           <span>·</span>
           <span>{a?.vehicle_type || "..."}</span>
         </div>
+        {a && (
+          <div className="mt-4 flex items-center gap-2 bg-blue-950/80 border-2 border-cyan-400/50 px-4 py-2 rounded-full text-base font-extrabold text-cyan-50 shadow-[0_0_20px_rgba(0,240,255,0.4)] animate-pulse">
+            🌤️ Live Destination Weather: {a.destination_temp_c !== undefined ? `${a.destination_temp_c}°C` : "Loading API..."}
+          </div>
+        )}
         </div>
         
         {userId && (

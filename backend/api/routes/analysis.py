@@ -36,6 +36,19 @@ def get_google_maps_route(lat1: float, lon1: float, lat2: float, lon2: float, ap
         print(f"Google Maps API Error: {e}")
     return None
 
+def get_live_weather(lat: float, lon: float) -> float:
+    """Fetch current ambient temperature from Open-Meteo for free."""
+    try:
+        url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true"
+        req = urllib.request.Request(url, headers={'User-Agent': 'TravelApp-Simulator'})
+        with urllib.request.urlopen(req, timeout=5) as response:
+            data = json.loads(response.read().decode())
+            if "current_weather" in data:
+                return float(data["current_weather"]["temperature"])
+    except Exception as e:
+        print(f"Weather API Error: {e}")
+    return 35.0  # Fallback to standard 35C ambient
+
 class TripRequest(BaseModel):
     speed_kmh: float
     vehicle_name: Optional[str] = None
@@ -91,6 +104,7 @@ class TripResponse(BaseModel):
     vehicle_mileage: float
     currency: str
     country_name: str
+    destination_temp_c: float
 
 @router.post("/trip", response_model=TripResponse)
 def analyze_trip(request: TripRequest):
@@ -98,8 +112,12 @@ def analyze_trip(request: TripRequest):
     distance_km = request.distance_km or 300.0
     baseline_hours = None
     google_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
+    destination_temp_c = 35.0  # Default ambient
 
     if request.from_lat and request.from_lon and request.to_lat and request.to_lon:
+        # Fetch Live Weather
+        destination_temp_c = get_live_weather(request.to_lat, request.to_lon)
+
         if google_api_key:
             route_data = get_google_maps_route(request.from_lat, request.from_lon, request.to_lat, request.to_lon, google_api_key)
             if route_data:
@@ -195,7 +213,7 @@ def analyze_trip(request: TripRequest):
         speed_status = "warning"
 
     # 3. Engine Heat Simulation
-    base_heat = 35  # ambient
+    base_heat = destination_temp_c  # Dynamic ambient from API!
     speed_heat = (request.speed_kmh / 160) * 40
     distance_heat = min(distance_km / 500, 1) * 15
     engine_size_factor = (engine_cc / 3000) * 10
@@ -204,56 +222,57 @@ def analyze_trip(request: TripRequest):
     if engine_heat_percent < 40:
         heat_status, heat_color = "cool", "#22c55e"
         heat_advice = "Engine temperature is optimal. No concerns."
-    elif engine_heat_percent < 55:
+    elif engine_heat_percent < 60:
         heat_status, heat_color = "normal", "#84cc16"
         heat_advice = "Engine running at normal temperature."
-    elif engine_heat_percent < 70:
+    elif engine_heat_percent < 75:
         heat_status, heat_color = "warm", "#eab308"
         heat_advice = "Engine getting warm. Consider reducing speed on long stretches."
-    elif engine_heat_percent < 85:
+    elif engine_heat_percent < 90:
         heat_status, heat_color = "hot", "#f97316"
         heat_advice = f"⚠️ Engine heat is HIGH at {request.speed_kmh}km/h! Reduce speed below 100km/h."
     else:
         heat_status, heat_color = "critical", "#ef4444"
-        heat_advice = f"🚨 CRITICAL! Engine overheating risk at {request.speed_kmh}km/h over {distance_km}km. Stop and cool down!"
+        heat_advice = f"🚨 CRITICAL! Ambient temp {destination_temp_c}°C + {request.speed_kmh}km/h causing overheat! Stop and cool down!"
 
     # 4. Oil System
     oil_base = 4.0  # liters typical
-    oil_stress = (distance_km / 5000) * 30 + (request.speed_kmh / 160) * 25 + (engine_cc / 4000) * 20
+    oil_stress = (distance_km / 5000) * 30 + (request.speed_kmh / 160) * 25 + (engine_cc / 4000) * 20 + (destination_temp_c / 50) * 10
     oil_stress_percent = min(100, oil_stress)
     oil_needed = oil_base * (1 + oil_stress_percent / 200)
 
-    if oil_stress_percent < 25:
+    if oil_stress_percent < 30:
         oil_status, oil_color = "good", "#22c55e"
         oil_advice = "Oil condition is excellent. No immediate concerns."
-    elif oil_stress_percent < 50:
+    elif oil_stress_percent < 55:
         oil_status, oil_color = "moderate", "#eab308"
         oil_advice = f"Oil will experience moderate stress. Ensure oil level is topped up before the {distance_km}km trip."
-    elif oil_stress_percent < 75:
+    elif oil_stress_percent < 80:
         oil_status, oil_color = "high", "#f97316"
-        oil_advice = f"⚠️ High oil stress expected. Check oil viscosity and level. Consider an oil change if over 4000km since last change."
+        oil_advice = f"⚠️ High oil stress expected due to heat. Check oil viscosity and level."
     else:
         oil_status, oil_color = "critical", "#ef4444"
-        oil_advice = f"🚨 Critical oil stress! Get a full oil change before this {distance_km}km trip. High-speed driving will degrade oil rapidly."
+        oil_advice = f"🚨 Critical oil stress! Hot driving conditions degrade oil rapidly. Change oil!"
 
     # 5. Coolant System
     coolant_base = 5.0  # liters typical
-    coolant_temp = 85 + (request.speed_kmh - 80) * 0.3 + (distance_km / 200) * 2
+    # Coolant runs hot based on speed and live ambient weather
+    coolant_temp = 85 + (request.speed_kmh - 80) * 0.3 + (distance_km / 200) * 2 + (destination_temp_c - 25) * 0.5
     coolant_temp = min(120, max(75, coolant_temp))
     coolant_needed = coolant_base * (1 + (coolant_temp - 85) / 100)
 
-    if coolant_temp < 90:
+    if coolant_temp < 92:
         coolant_status, coolant_color = "normal", "#22c55e"
-        coolant_advice = f"Coolant temperature ~{int(coolant_temp)}°C. System operating within normal range."
-    elif coolant_temp < 100:
+        coolant_advice = f"Coolant temp ~{int(coolant_temp)}°C. System operating perfectly in {destination_temp_c}°C weather."
+    elif coolant_temp < 102:
         coolant_status, coolant_color = "elevated", "#eab308"
-        coolant_advice = f"Coolant temperature ~{int(coolant_temp)}°C. Slightly elevated. Ensure coolant reservoir is full."
-    elif coolant_temp < 110:
+        coolant_advice = f"Coolant temp ~{int(coolant_temp)}°C. Elevated due to {destination_temp_c}°C ambient. Check reservoir."
+    elif coolant_temp < 112:
         coolant_status, coolant_color = "high", "#f97316"
-        coolant_advice = f"⚠️ Coolant at ~{int(coolant_temp)}°C! Check for leaks. Top up coolant before departure."
+        coolant_advice = f"⚠️ Coolant at ~{int(coolant_temp)}°C! Extreme heat warning! Top up coolant."
     else:
         coolant_status, coolant_color = "critical", "#ef4444"
-        coolant_advice = f"🚨 Coolant at ~{int(coolant_temp)}°C! Risk of overheating. Do not drive without coolant service!"
+        coolant_advice = f"🚨 Critical! {int(coolant_temp)}°C in {destination_temp_c}°C weather! Do not drive without coolant service!"
 
     # Format cost display
     currency_symbols = {
@@ -300,6 +319,7 @@ def analyze_trip(request: TripRequest):
         vehicle_mileage=mileage,
         currency=currency,
         country_name=country_name,
+        destination_temp_c=round(destination_temp_c, 1),
     )
 
 
